@@ -1,0 +1,72 @@
+name: aft_plc_web
+description: Sistema de Monitoramento de Equipamentos Alfatronic
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: '>=3.32.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # Firebase
+  firebase_core: ^3.6.2
+  firebase_auth: ^5.3.3
+  cloud_firestore: ^5.5.2
+  firebase_storage: ^12.3.7
+  firebase_messaging: ^15.1.5
+  
+  # Bluetooth
+  flutter_blue_plus: ^1.33.2
+  
+  # Localização
+  geolocator: ^13.0.2
+  geocoding: 4.0.0
+  
+  # State Management
+  provider: ^6.1.2
+  
+  # Navegação
+  go_router: ^14.6.2
+  
+  # UI/UX
+  flutter_svg: ^2.0.10+1
+  lottie: ^3.2.0
+  google_fonts: ^6.2.1
+  
+  # Gráficos
+  fl_chart: ^0.70.0
+  
+  # Utilidades
+  intl: ^0.19.0
+  shared_preferences: ^2.3.3
+  dio: ^5.7.0
+  connectivity_plus: ^6.1.1
+  
+  # Exportação de dados
+  excel: ^4.0.6
+  csv: ^6.0.0
+  
+  # Notificações
+  flutter_local_notifications: ^18.0.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  build_runner: ^2.4.13
+  mockito: ^5.4.5
+
+flutter:
+  uses-material-design: true
+  
+  assets:
+    - assets/images/
+  
+  fonts:
+    - family: Montserrat
+      fonts:
+        - asset: assets/fonts/Montserrat-Regular.ttf
+        - asset: assets/fonts/Montserrat-Bold.ttf
+          weight: 700

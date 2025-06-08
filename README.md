@@ -1,6 +1,3 @@
-- plc_web
-Projeto do AFT_PLC_WEB feito para a disciplina de Fundamentos da Engenharia de Software
-
 - Sobre o Projeto
     * O AFT-PLC-WEB é uma solução completa de IoT industrial desenvolvida pela Alfatronic para monitoramento em tempo real de equipamentos industriais. 
     O sistema conecta máquinas equipadas com o dispositivo TRM6-MAX a uma plataforma cloud, permitindo gestão eficiente e análise de dados operacionais.
