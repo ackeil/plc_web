@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_plcweb/src/config/routes/app_router.dart';
 import 'package:provider/provider.dart';
 import 'package:dartz/dartz.dart';
 import 'src/features/auth/presentation/pages/login_page.dart';
@@ -53,6 +54,7 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
         home: const LoginPage(),
+        onGenerateRoute: AppRouter.generateRoute,
       ),
     );
   }

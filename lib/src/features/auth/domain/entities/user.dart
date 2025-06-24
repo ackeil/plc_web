@@ -12,6 +12,7 @@ class User extends Equatable {
   final DateTime createdAt;
   final DateTime? lastLogin;
   final bool isActive;
+  final bool isMasterUser;
   
   const User({
     required this.id,
@@ -25,6 +26,7 @@ class User extends Equatable {
     required this.createdAt,
     this.lastLogin,
     this.isActive = true,
+    this.isMasterUser = false
   });
   
   @override
@@ -40,6 +42,7 @@ class User extends Equatable {
     createdAt,
     lastLogin,
     isActive,
+    isMasterUser,
   ];
   
   // Método para verificar permissões
@@ -83,6 +86,7 @@ class User extends Equatable {
     DateTime? createdAt,
     DateTime? lastLogin,
     bool? isActive,
+    bool? isMasterUser
   }) {
     return User(
       id: id ?? this.id,
@@ -96,6 +100,7 @@ class User extends Equatable {
       createdAt: createdAt ?? this.createdAt,
       lastLogin: lastLogin ?? this.lastLogin,
       isActive: isActive ?? this.isActive,
+      isMasterUser: isMasterUser ?? this.isMasterUser
     );
   }
   
