@@ -1,4 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:dartz/dartz.dart';
+import 'src/features/auth/presentation/pages/login_page.dart';
+import 'src/features/auth/presentation/providers/auth_provider.dart';
+import 'src/features/users/presentation/providers/users_provider.dart';
+import 'src/core/constants/app_colors.dart';
+import 'src/core/errors/failures.dart';
+
+// Domain imports
+import 'src/features/auth/domain/entities/user.dart';
+import 'src/features/auth/domain/repositories/auth_repository.dart';
+import 'src/features/auth/domain/usecases/login_usecase.dart';
+import 'src/features/auth/domain/usecases/logout_usecase.dart';
+import 'src/features/auth/domain/usecases/recover_password_usecase.dart';
+import 'src/features/users/domain/repositories/users_repository.dart';
+import 'src/features/users/domain/entities/user_entity.dart';
+import 'src/features/users/domain/usecases/create_user_usecase.dart';
+import 'src/features/users/domain/usecases/update_user_usecase.dart';
+import 'src/features/users/domain/usecases/delete_user_usecase.dart';
 
 void main() {
   runApp(const MyApp());
@@ -7,116 +26,133 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => AuthProvider(
+            loginUseCase: LoginUseCase(MockAuthRepository()),
+            logoutUseCase: LogoutUseCase(MockAuthRepository()),
+            recoverPasswordUseCase: RecoverPasswordUseCase(MockAuthRepository()),
+          ),
         ),
+        ChangeNotifierProvider(
+          create: (_) => UsersProvider(
+            createUserUseCase: CreateUserUseCase(MockUsersRepository()),
+            updateUserUseCase: UpdateUserUseCase(MockUsersRepository()),
+            deleteUserUseCase: DeleteUserUseCase(MockUsersRepository()),
+          ),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'AFT-PLC-WEB',
+        theme: ThemeData(
+          primaryColor: AppColors.primary,
+          colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
+          useMaterial3: true,
+        ),
+        home: const LoginPage(),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+}
+
+// Temporary mock implementations
+class MockAuthRepository implements AuthRepository {
+  @override
+  Future<Either<Failure, User>> login({required String email, required String password}) async {
+    // Mock implementation - simula login bem-sucedido
+    if (email == "admin@test.com" && password == "password123") {
+      return Right(User(
+        id: '1',
+        name: 'Admin User',
+        email: email,
+        role: 'admin',
+        createdAt: DateTime.now(),
+      ));
+    }
+    return const Left(InvalidCredentialsFailure('Email ou senha incorretos'));
+  }
+  
+  @override
+  Future<Either<Failure, void>> logout() async {
+    return const Right(null);
+  }
+  
+  @override
+  Future<Either<Failure, void>> recoverPassword(String email) async {
+    return const Right(null);
+  }
+  
+  @override
+  Future<Either<Failure, User?>> getCurrentUser() async {
+    return const Right(null);
+  }
+  
+  @override
+  Stream<User?> get authStateChanges => Stream.value(null);
+}
+
+class MockUsersRepository implements UsersRepository {
+  @override
+  Future<Either<Failure, List<UserEntity>>> getUsers({String? role, String? companyId}) async {
+    return const Right([]);
+  }
+  
+  @override
+  Future<Either<Failure, UserEntity>> getUser(String userId) async {
+    return Left(UserNotFoundFailure());
+  }
+  
+  @override
+  Future<Either<Failure, UserEntity>> createUser(Map<String, dynamic> userData) async {
+    return Right(UserEntity(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      name: userData['name'],
+      email: userData['email'],
+      role: userData['role'],
+      createdAt: DateTime.now(),
+    ));
+  }
+  
+  @override
+  Future<Either<Failure, UserEntity>> updateUser({
+    required String userId,
+    required Map<String, dynamic> userData,
+  }) async {
+    return Right(UserEntity(
+      id: userId,
+      name: userData['name'],
+      email: userData['email'],
+      role: userData['role'],
+      createdAt: DateTime.now(),
+    ));
+  }
+  
+  @override
+  Future<Either<Failure, void>> deleteUser(String userId) async {
+    return const Right(null);
+  }
+  
+  @override
+  Future<Either<Failure, UserEntity>> assignEquipments({
+    required String userId,
+    required List<String> equipmentIds,
+  }) async {
+    return Left(UnknownFailure());
+  }
+  
+  @override
+  Future<Either<Failure, UserEntity>> changeUserRole({
+    required String userId,
+    required String newRole,
+  }) async {
+    return Left(UnknownFailure());
+  }
+  
+  @override
+  Future<Either<Failure, List<UserEntity>>> searchUsers(String query) async {
+    return const Right([]);
   }
 }
