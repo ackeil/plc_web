@@ -23,10 +23,8 @@ dependencies:
   csv: ^5.1.1                 # Exportar CSV
   image_picker: ^1.0.5        # Fotos
   
-  # Gerenciamento de Estado (escolha um)
+  # Gerenciamento de Estado
   provider: ^6.1.1            # Mais simples
-  # OU
-  flutter_riverpod: ^2.4.9    # Mais moderno
   
   # Notificações
   flutter_local_notifications: ^16.2.0
