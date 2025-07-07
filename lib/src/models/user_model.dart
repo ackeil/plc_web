@@ -1,13 +1,13 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// lib/models/user_model.dart
 
-/// Enum para definir os tipos de usuário no sistema
+/// Tipos de usuário no sistema
 enum UserRole {
-  administrator, // Administrador do sistema (Alfatronic)
-  manager,      // Gerente (Fabricante/Integrador)
-  operator      // Operador de equipamentos
+  administrator,
+  manager,
+  operator
 }
 
-/// Modelo principal de usuário do sistema AFT-PLC-WEB
+/// Modelo de usuário do sistema
 class UserModel {
   final String id;
   final String email;
@@ -21,25 +21,17 @@ class UserModel {
   // Campos específicos para Gerentes
   final String? companyName;
   final String? companyId;
-  final bool? isManufacturer; // true = Fabricante, false = Integrador
+  final bool? isManufacturer;
   
   // Campos específicos para Operadores
-  final String? managerId; // ID do gerente responsável
-  final List<String>? authorizedEquipmentIds; // Equipamentos autorizados
+  final String? managerId;
+  final List<String>? authorizedEquipmentIds;
   
-  // Informações de localização e dispositivo
+  // Informações adicionais
   final String? lastKnownLocation;
-  final String? deviceId; // ID do dispositivo móvel pareado
-  final String? bluetoothMac; // MAC address para pareamento
-  
-  // Controle de acesso e segurança
+  final String? deviceId;
   final bool emailVerified;
-  final int? failedLoginAttempts;
-  final DateTime? lockedUntil;
-  
-  // Configurações de notificação
   final bool notificationsEnabled;
-  final String? fcmToken; // Token para push notifications
   final List<String>? notificationPreferences;
 
   UserModel({
@@ -58,16 +50,12 @@ class UserModel {
     this.authorizedEquipmentIds,
     this.lastKnownLocation,
     this.deviceId,
-    this.bluetoothMac,
     this.emailVerified = false,
-    this.failedLoginAttempts = 0,
-    this.lockedUntil,
     this.notificationsEnabled = true,
-    this.fcmToken,
     this.notificationPreferences,
   });
 
-  /// Converte o modelo para Map para salvar no Firestore
+  /// Converte para Map
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -75,8 +63,8 @@ class UserModel {
       'name': name,
       'phoneNumber': phoneNumber,
       'role': role.toString().split('.').last,
-      'createdAt': Timestamp.fromDate(createdAt),
-      'lastLogin': lastLogin != null ? Timestamp.fromDate(lastLogin!) : null,
+      'createdAt': createdAt.toIso8601String(),
+      'lastLogin': lastLogin?.toIso8601String(),
       'isActive': isActive,
       'companyName': companyName,
       'companyId': companyId,
@@ -85,17 +73,13 @@ class UserModel {
       'authorizedEquipmentIds': authorizedEquipmentIds,
       'lastKnownLocation': lastKnownLocation,
       'deviceId': deviceId,
-      'bluetoothMac': bluetoothMac,
       'emailVerified': emailVerified,
-      'failedLoginAttempts': failedLoginAttempts,
-      'lockedUntil': lockedUntil != null ? Timestamp.fromDate(lockedUntil!) : null,
       'notificationsEnabled': notificationsEnabled,
-      'fcmToken': fcmToken,
       'notificationPreferences': notificationPreferences,
     };
   }
 
-  /// Cria um modelo a partir de um Map do Firestore
+  /// Cria a partir de um Map
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
       id: map['id'] ?? '',
@@ -103,10 +87,8 @@ class UserModel {
       name: map['name'] ?? '',
       phoneNumber: map['phoneNumber'] ?? '',
       role: _parseUserRole(map['role']),
-      createdAt: (map['createdAt'] as Timestamp).toDate(),
-      lastLogin: map['lastLogin'] != null 
-          ? (map['lastLogin'] as Timestamp).toDate() 
-          : null,
+      createdAt: DateTime.parse(map['createdAt']),
+      lastLogin: map['lastLogin'] != null ? DateTime.parse(map['lastLogin']) : null,
       isActive: map['isActive'] ?? true,
       companyName: map['companyName'],
       companyId: map['companyId'],
@@ -117,21 +99,15 @@ class UserModel {
           : null,
       lastKnownLocation: map['lastKnownLocation'],
       deviceId: map['deviceId'],
-      bluetoothMac: map['bluetoothMac'],
       emailVerified: map['emailVerified'] ?? false,
-      failedLoginAttempts: map['failedLoginAttempts'] ?? 0,
-      lockedUntil: map['lockedUntil'] != null 
-          ? (map['lockedUntil'] as Timestamp).toDate() 
-          : null,
       notificationsEnabled: map['notificationsEnabled'] ?? true,
-      fcmToken: map['fcmToken'],
       notificationPreferences: map['notificationPreferences'] != null 
           ? List<String>.from(map['notificationPreferences']) 
           : null,
     );
   }
 
-  /// Método auxiliar para converter string em UserRole
+  /// Converte string em UserRole
   static UserRole _parseUserRole(String? role) {
     switch (role) {
       case 'administrator':
@@ -145,7 +121,7 @@ class UserModel {
     }
   }
 
-  /// Cria uma cópia do modelo com campos atualizados
+  /// Cria uma cópia com campos atualizados
   UserModel copyWith({
     String? id,
     String? email,
@@ -162,12 +138,8 @@ class UserModel {
     List<String>? authorizedEquipmentIds,
     String? lastKnownLocation,
     String? deviceId,
-    String? bluetoothMac,
     bool? emailVerified,
-    int? failedLoginAttempts,
-    DateTime? lockedUntil,
     bool? notificationsEnabled,
-    String? fcmToken,
     List<String>? notificationPreferences,
   }) {
     return UserModel(
@@ -186,33 +158,23 @@ class UserModel {
       authorizedEquipmentIds: authorizedEquipmentIds ?? this.authorizedEquipmentIds,
       lastKnownLocation: lastKnownLocation ?? this.lastKnownLocation,
       deviceId: deviceId ?? this.deviceId,
-      bluetoothMac: bluetoothMac ?? this.bluetoothMac,
       emailVerified: emailVerified ?? this.emailVerified,
-      failedLoginAttempts: failedLoginAttempts ?? this.failedLoginAttempts,
-      lockedUntil: lockedUntil ?? this.lockedUntil,
       notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
-      fcmToken: fcmToken ?? this.fcmToken,
       notificationPreferences: notificationPreferences ?? this.notificationPreferences,
     );
   }
 
-  /// Verifica se o usuário tem permissão para acessar um equipamento
+  /// Verifica se tem acesso a um equipamento
   bool hasAccessToEquipment(String equipmentId) {
     if (role == UserRole.administrator) return true;
-    if (role == UserRole.manager) return true; // Gerente vê todos da empresa
+    if (role == UserRole.manager) return true;
     if (role == UserRole.operator && authorizedEquipmentIds != null) {
       return authorizedEquipmentIds!.contains(equipmentId);
     }
     return false;
   }
 
-  /// Verifica se a conta está bloqueada por tentativas de login
-  bool get isLocked {
-    if (lockedUntil == null) return false;
-    return DateTime.now().isBefore(lockedUntil!);
-  }
-
-  /// Retorna o nome do role em português para exibição
+  /// Retorna o nome do role em português
   String get roleDisplayName {
     switch (role) {
       case UserRole.administrator:

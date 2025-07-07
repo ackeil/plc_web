@@ -1,36 +1,10 @@
 // lib/main.dart
 
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart'; // Arquivo gerado pelo FlutterFire CLI
-import 'config/firebase_config.dart'; // Nossa configuração central
-import 'screens/splash/splash_screen.dart';
+import 'src/config/app_colors.dart';
+import 'src/config/app_router.dart';
 
-void main() async {
-  // Garante que o Flutter esteja inicializado antes do Firebase
-  WidgetsFlutterBinding.ensureInitialized();
-  
-  try {
-    // Inicializa o Firebase com as configurações da plataforma atual
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-    print('Firebase inicializado com sucesso!');
-    
-    // Inicializa as configurações customizadas do Firebase
-    FirebaseConfig.initialize();
-    
-    // Verifica a conexão em modo desenvolvimento
-    if (FirebaseConfig.isDevelopment) {
-      final isConnected = await FirebaseConfig.checkConnection();
-      print('Conexão com Firebase: ${isConnected ? "OK" : "FALHOU"}');
-    }
-  } catch (e) {
-    print('Erro ao inicializar Firebase: $e');
-    // Em produção, você pode querer mostrar uma tela de erro
-  }
-  
-  // Inicia o aplicativo apenas após o Firebase estar pronto
+void main() {
   runApp(const AftPlcWebApp());
 }
 
@@ -40,41 +14,100 @@ class AftPlcWebApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'AFT-PLC-WEB',
+      title: 'AFT-PLC-WEB Demo',
       debugShowCheckedModeBanner: false,
+      
+      // Tema claro
       theme: ThemeData(
-        // Cores da Alfatronic baseadas no logo
-        primarySwatch: Colors.blue,
-        primaryColor: const Color(0xFF0066CC), // Azul Alfatronic
-        scaffoldBackgroundColor: const Color(0xFFF5F5F5),
+        // Cores principais
+        primarySwatch: MaterialColor(
+          AppColors.primary.value,
+          <int, Color>{
+            50: AppColors.primary.withOpacity(0.1),
+            100: AppColors.primary.withOpacity(0.2),
+            200: AppColors.primary.withOpacity(0.3),
+            300: AppColors.primary.withOpacity(0.4),
+            400: AppColors.primary.withOpacity(0.5),
+            500: AppColors.primary,
+            600: AppColors.primary.withOpacity(0.7),
+            700: AppColors.primaryDark,
+            800: AppColors.primaryDark.withOpacity(0.9),
+            900: AppColors.primaryDark.withOpacity(0.8),
+          },
+        ),
+        primaryColor: AppColors.primary,
+        scaffoldBackgroundColor: AppColors.background,
         
-        // Define o tema dos campos de texto
+        // AppBar
+        appBarTheme: const AppBarTheme(
+          backgroundColor: AppColors.primary,
+          foregroundColor: AppColors.textOnPrimary,
+          elevation: 0,
+          centerTitle: true,
+          titleTextStyle: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textOnPrimary,
+          ),
+        ),
+        
+        // Campos de texto
         inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: AppColors.surface,
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: AppColors.divider),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: AppColors.divider),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: AppColors.primary, width: 2),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: AppColors.error),
           ),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
-            vertical: 14,
+            vertical: 16,
           ),
         ),
         
-        // Define o tema dos botões
+        // Botões elevados
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primary,
+            foregroundColor: AppColors.textOnPrimary,
+            elevation: 2,
             padding: const EdgeInsets.symmetric(
-              horizontal: 32,
+              horizontal: 24,
               vertical: 12,
             ),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(12),
             ),
           ),
         ),
+        
+        // Cards
+        cardTheme: CardThemeData(
+          color: AppColors.surface,
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          clipBehavior: Clip.antiAlias,
+        ),
       ),
       
-      // A SplashScreen será responsável por verificar o estado de autenticação
-      home: const SplashScreen(),
+      // Rotas
+      initialRoute: '/login',  // Vai direto para login
+      routes: AppRouter.routes,
+      onGenerateRoute: AppRouter.onGenerateRoute,
     );
   }
 }
