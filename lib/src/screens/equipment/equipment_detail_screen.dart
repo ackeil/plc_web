@@ -9,6 +9,7 @@ import '../../models/log_model.dart';
 import '../../services/auth_service.dart';
 import '../../services/demo_data_services.dart';
 import '../../widgets/loading_widget.dart';
+import '../../models/log_model.dart';
 
 /// Tela de detalhes do equipamento
 /// 
