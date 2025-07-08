@@ -579,7 +579,9 @@ class _EquipmentDetailScreenState extends State<EquipmentDetailScreen>
   Widget _buildLogItem(Map<String, dynamic> log) {
     final type = log['type'] as String?;
     final severity = log['severity'] as String?;
-    final timestamp = DateTime.parse(log['timestamp']);
+    final timestamp = log['timestamp'] is DateTime
+    ? log['timestamp']
+    : DateTime.parse(log['timestamp']);
     
     IconData icon;
     Color color;
@@ -732,7 +734,7 @@ class _EquipmentDetailScreenState extends State<EquipmentDetailScreen>
                     _buildDetailItem('Operador', log['operatorName'] ?? 'Sistema'),
                     _buildDetailItem(
                       'Data/Hora',
-                      '${_formatDate(DateTime.parse(log['timestamp']))} ${_formatTime(DateTime.parse(log['timestamp']))}',
+                      '${_formatDate(log['timestamp'])} ${_formatTime(log['timestamp'])}',
                     ),
                     if (log['severity'] != null)
                       _buildDetailItem('Severidade', _getSeverityDescription(log['severity'])),
