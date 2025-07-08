@@ -489,7 +489,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               },
             ),
             ListTile(
-              leading: const Icon(Icons.csv, color: Colors.blue),
+              leading: const Icon(Icons.insert_drive_file, color: Colors.blue),
               title: const Text('CSV (.csv)'),
               subtitle: const Text('Valores separados por vírgula'),
               onTap: () {

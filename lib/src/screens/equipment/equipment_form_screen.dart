@@ -605,11 +605,11 @@ class _EquipmentFormScreenState extends State<EquipmentFormScreen> {
                   borderRadius: BorderRadius.circular(16),
                   color: AppColors.background,
                 ),
-                child: _selectedImage != null
+                child: _selectedImagePath != null
                     ? ClipRRect(
                         borderRadius: BorderRadius.circular(16),
                         child: Image.file(
-                          _selectedImage!,
+                          File(_selectedImagePath!),
                           fit: BoxFit.cover,
                         ),
                       )
